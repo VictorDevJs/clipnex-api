@@ -1,0 +1,21 @@
+services:
+  clipnex:
+    build: .
+    container_name: clipnex-ai
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      PORT: 8000
+      CLIPNEX_DATA_DIR: /data
+      CLIPNEX_MAX_CLIPS: 100
+      CLIPNEX_MAX_UPLOAD_MB: 2048
+      CLIPNEX_CLEANUP_HOURS: 24
+      CLIPNEX_JOB_WORKERS: 1
+      # Coloque aqui o domínio do Netlify depois do deploy. Exemplo: https://clipnex-ai.netlify.app
+      CLIPNEX_CORS_ORIGINS: "http://localhost:8888,https://SEU-SITE.netlify.app"
+    volumes:
+      - clipnex_data:/data
+
+volumes:
+  clipnex_data:
