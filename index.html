@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ClipNex AI - Ultra Speed</title>
+  <link rel="stylesheet" href="/static/styles.css?v=610" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">▶</div>
+        <div>
+          <strong>ClipNex <span>AI</span></strong>
+          <small>Ultra rápido + legendas</small>
+        </div>
+      </div>
+      <nav>
+        <a class="active">Dashboard</a>
+        <a>Novo Projeto</a>
+        <a>Meus Cortes</a>
+        <a>Editor</a>
+        <a>Exportações</a>
+        <a>Planos</a>
+      </nav>
+      <div class="side-card">
+        <strong>Modo real</strong>
+        <p>Link do YouTube ou upload. Gera MP4 real com proporção, legendas e modo ultra rápido com GPU automática quando disponível.</p>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <h1>Sistema de Cortes</h1>
+          <p>Cole um link ou envie um vídeo. O ClipNex corta, ajusta a proporção e legenda as falas com renderização ultra rápida.</p>
+        </div>
+        <div class="status-pill" id="healthStatus">Verificando motor...</div>
+      </header>
+
+      <section class="grid-metrics">
+        <div class="metric"><span>Formato</span><strong id="metricAspect">9:16</strong></div>
+        <div class="metric"><span>Duração</span><strong id="metricDuration">01:00</strong></div>
+        <div class="metric"><span>Legenda</span><strong id="metricCaption">Ativada</strong></div>
+        <div class="metric"><span>Velocidade</span><strong id="metricSpeed">Ultra rápido</strong></div>
+      </section>
+
+      <section class="panel">
+        <div class="section-title">
+          <h2>Novo corte</h2>
+          <span>Use link ou arquivo. Não precisa dos dois.</span>
+        </div>
+
+        <form id="clipForm" autocomplete="off">
+          <label class="field">
+            <span>Link do YouTube</span>
+            <input id="videoUrl" name="video_url" type="url" placeholder="https://www.youtube.com/watch?v=..." />
+          </label>
+
+          <div class="or-row"><span>ou</span></div>
+
+          <label class="upload-box" for="videoFile">
+            <input id="videoFile" name="video_file" type="file" accept="video/*" />
+            <strong>Enviar vídeo do computador</strong>
+            <small id="fileName">MP4, MOV, MKV ou WEBM</small>
+          </label>
+
+          <label class="field">
+            <span>O que você quer fazer?</span>
+            <textarea id="command" rows="3">Quero vários vídeos de 1 minuto, legendados, no formato TikTok.</textarea>
+          </label>
+
+          <div class="options-grid main-options count-options">
+            <label class="field compact">
+              <span>Duração de cada corte</span>
+              <select id="durationSeconds" name="duration_seconds">
+                <option value="30">00:30</option>
+                <option value="45">00:45</option>
+                <option value="60" selected>01:00</option>
+                <option value="90">01:30</option>
+                <option value="120">02:00</option>
+              </select>
+            </label>
+
+            <label class="field compact">
+              <span>Quantidade de cortes</span>
+              <select id="clipCount" name="clip_count">
+                <option value="10" selected>10 vídeos</option>
+                <option value="20">20 vídeos</option>
+                <option value="30">30 vídeos</option>
+                <option value="40">40 vídeos</option>
+                <option value="50">50 vídeos</option>
+                <option value="60">60 vídeos</option>
+                <option value="70">70 vídeos</option>
+                <option value="80">80 vídeos</option>
+                <option value="90">90 vídeos</option>
+                <option value="100">100 vídeos</option>
+                <option value="0">Todos possíveis até 100</option>
+              </select>
+              <small>Menu rápido: 10, 20, 30, 40, 50 até 100.</small>
+            </label>
+
+            <label class="field compact">
+              <span>Quantidade manual</span>
+              <input id="customClipCount" type="number" min="1" max="100" placeholder="Ex: 50" />
+              <small>Opcional. Preenche aqui se quiser um número específico de 1 a 100.</small>
+            </label>
+
+            <label class="field compact">
+              <span>Proporção do vídeo</span>
+              <select id="aspectRatio" name="aspect_ratio">
+                <option value="9:16" selected>9:16 — Celular / TikTok / Reels / Shorts</option>
+                <option value="16:9">16:9 — PC / YouTube horizontal</option>
+                <option value="1:1">1:1 — Feed quadrado</option>
+                <option value="original">Original — Manter proporção original</option>
+              </select>
+            </label>
+
+            <label class="field compact">
+              <span>Modo de velocidade</span>
+              <select id="speedMode" name="speed_mode">
+                <option value="ultra" selected>Ultra rápido — menor tempo, 540/960p</option>
+                <option value="turbo">Turbo — rápido, 720/1280p</option>
+                <option value="balanced">Equilibrado — boa qualidade</option>
+                <option value="quality">Qualidade — mais pesado</option>
+              </select>
+              <small>Para entregar rápido, deixe em Ultra rápido.</small>
+            </label>
+
+            <label class="field compact">
+              <span>Renderização</span>
+              <select id="encoderMode" name="encoder_mode">
+                <option value="auto" selected>Auto — usa GPU se disponível</option>
+                <option value="nvenc">Forçar NVIDIA NVENC</option>
+                <option value="qsv">Forçar Intel Quick Sync</option>
+                <option value="amf">Forçar AMD AMF</option>
+                <option value="cpu">Somente CPU</option>
+              </select>
+              <small>Auto tenta GPU primeiro e cai para CPU se precisar.</small>
+            </label>
+
+            <label class="field compact">
+              <span>Download do YouTube</span>
+              <select id="downloadQuality" name="download_quality">
+                <option value="fast" selected>Rápido — baixa até 480p</option>
+                <option value="standard">Padrão — baixa até 720p</option>
+                <option value="quality">Qualidade — baixa até 1080p</option>
+              </select>
+              <small>Rápido economiza muito tempo antes do corte.</small>
+            </label>
+          </div>
+
+          <div class="options-grid caption-options">
+            <label class="toggle-card">
+              <input id="captions" name="captions" type="checkbox" checked />
+              <div>
+                <strong>Legendar falas automaticamente</strong>
+                <small>Transcreve o áudio e queima a legenda dentro do MP4.</small>
+              </div>
+            </label>
+
+            <label class="field compact">
+              <span>Precisão da legenda</span>
+              <select id="subtitleModel" name="subtitle_model">
+                <option value="tiny" selected>Rápido — tiny</option>
+                <option value="base">Melhor — base</option>
+                <option value="small">Mais preciso — small</option>
+              </select>
+              <small>Na primeira vez o modelo é baixado.</small>
+            </label>
+
+            <label class="field compact">
+              <span>Idioma das falas</span>
+              <select id="language" name="language">
+                <option value="pt" selected>Português</option>
+                <option value="auto">Detectar automaticamente</option>
+                <option value="en">Inglês</option>
+                <option value="es">Espanhol</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="summary-strip">
+            <div><span>Saída</span><strong>MP4 + ZIP</strong></div>
+            <div><span>Proporção</span><strong id="summaryAspect">9:16</strong></div>
+            <div><span>Legenda</span><strong id="summaryCaption">Falas ativadas</strong></div>
+            <div><span>Cortes</span><strong id="summaryCount">10 vídeos</strong></div>
+            <div><span>Modo</span><strong id="summarySpeed">Ultra rápido</strong></div>
+          </div>
+
+          <button class="primary-btn" type="submit" id="submitBtn">Gerar cortes reais agora</button>
+        </form>
+      </section>
+
+      <section class="progress-card hidden" id="progressCard">
+        <div class="spinner"></div>
+        <div>
+          <strong id="progressTitle">Processando...</strong>
+          <p id="progressText">Baixando/analisando o vídeo e gerando os cortes em modo ultra rápido. Não feche esta página.</p>
+        </div>
+      </section>
+
+      <section class="error-card hidden" id="errorCard">
+        <strong>Falha ao processar</strong>
+        <pre id="errorText"></pre>
+      </section>
+
+      <section class="results hidden" id="results">
+        <div class="section-title">
+          <div>
+            <h2>Cortes gerados</h2>
+            <span id="resultMeta">MP4 pronto para baixar.</span>
+          </div>
+          <a class="zip-btn" id="zipLink" href="#">Baixar ZIP</a>
+        </div>
+        <div class="clips-grid" id="clipsGrid"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/static/app.js?v=610"></script>
+</body>
+</html>
